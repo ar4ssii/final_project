@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController _searchController = TextEditingController();
-  final server = "http://localhost/devops_finals/api";
+  final server = "http://192.168.100.107/devops_finals/api";
   List<dynamic> notes = [];
   List<dynamic> filteredNotes = [];
 
@@ -90,7 +90,7 @@ class _MyAppState extends State<MyApp> {
             // Check if notes list is empty
             notes.isEmpty
                 ? Container(
-              margin: EdgeInsets.symmetric(vertical: 200),
+              margin: EdgeInsets.symmetric(vertical: 150),
               child: Column(
                 children: [
                   Image.network(

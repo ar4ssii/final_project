@@ -1,14 +1,8 @@
 import 'dart:convert';
-import 'main.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-  ));
-}
+import 'main.dart';
 
 class UpdateNote extends StatefulWidget {
   final String id;
@@ -16,11 +10,12 @@ class UpdateNote extends StatefulWidget {
   final String Content;
   final String dateTime;
 
-  UpdateNote(
-      {required this.id,
-      required this.Title,
-      required this.Content,
-      required this.dateTime});
+  UpdateNote({
+    required this.id,
+    required this.Title,
+    required this.Content,
+    required this.dateTime,
+  });
 
   @override
   _UpdateNoteState createState() => _UpdateNoteState();
@@ -29,21 +24,51 @@ class UpdateNote extends StatefulWidget {
 class _UpdateNoteState extends State<UpdateNote> {
   TextEditingController _title = TextEditingController();
   TextEditingController _content = TextEditingController();
-  final server = "http://localhost/devops_finals/api";
+  final server = "http://192.168.100.107/devops_finals/api";
 
-  Future<void> UpdateData() async {
+  Future<void> updateData() async {
     final url = "$server/notes.php";
     Map<String, dynamic> data = {
       "title": _title.text,
       "content": _content.text,
-      "id": widget.id
+      "id": widget.id,
     };
-    final response = await http.put(Uri.parse(url),body: jsonEncode(data));
+    final response =
+    await http.put(Uri.parse(url), body: jsonEncode(data));
     print(response.body);
     print(_title.text);
     print(_content.text);
 
-    Navigator.pop(context);
+    // Reload main screen after update
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => MyApp()),
+    );
+  }
+
+  Future<void> deleteNote() async {
+    final url = "$server/notes.php";
+    Map<String, dynamic> data = {
+      "id": widget.id,
+    };
+
+    try {
+      final response =
+      await http.delete(Uri.parse(url), body: jsonEncode(data));
+      if (response.statusCode == 200) {
+        print('Note deleted successfully');
+
+        // Reload main screen after delete
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => MyApp()),
+        );
+      } else {
+        print('Failed to delete note: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error deleting note: $e');
+    }
   }
 
   @override
@@ -54,27 +79,6 @@ class _UpdateNoteState extends State<UpdateNote> {
     print(widget.id);
     super.initState();
   }
-
-  Future<void> deleteNote(String id) async {
-    final url = "$server/notes.php";
-    Map<String, dynamic> data = {
-      "id": widget.id
-    };
-
-    try {
-      final response = await http.delete(Uri.parse(url),body: jsonEncode(data));
-      if (response.statusCode == 200) {
-        print('Note deleted successfully');
-      } else {
-        print('Failed to delete note: ${response.statusCode}');
-      }
-      Navigator.pop(context);
-    } catch (e) {
-      print('Error deleting note: $e');
-    }
-  }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -93,32 +97,20 @@ class _UpdateNoteState extends State<UpdateNote> {
               },
               child: Icon(Icons.chevron_left),
             ),
-            Row(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    String id = (widget.id);
-                    print('Trash tapped: ' + widget.id);
-                    deleteNote(widget.id);
-                  },
-                  child: Icon(Icons.delete)
-                ),
-                GestureDetector(
-                  onTap: () {
-                    UpdateData();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.all(10),
-                    child: Text(
-                      'Update',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                      ),
-                    ),
+            GestureDetector(
+              onTap: () {
+                updateData();
+              },
+              child: Padding(
+                padding: EdgeInsets.all(10),
+                child: Text(
+                  'Update',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
@@ -139,8 +131,11 @@ class _UpdateNoteState extends State<UpdateNote> {
                           hintText: 'Title',
                           hintStyle: TextStyle(fontSize: 25),
                           border: InputBorder.none,
-                          contentPadding:
-                              EdgeInsets.only(top: 10, left: 10, right: 10),
+                          contentPadding: EdgeInsets.only(
+                            top: 10,
+                            left: 10,
+                            right: 10,
+                          ),
                         ),
                         maxLines: null,
                       ),
@@ -157,7 +152,7 @@ class _UpdateNoteState extends State<UpdateNote> {
                         controller: _content,
                         decoration: InputDecoration(
                           border: InputBorder.none,
-                          hintText: 'Context here...',
+                          hintText: 'Content here...',
                         ),
                         maxLines: null,
                       ),
@@ -171,12 +166,23 @@ class _UpdateNoteState extends State<UpdateNote> {
             padding: EdgeInsets.all(10),
             alignment: Alignment.bottomCenter,
             child: Text(
-              DateFormat('MMMM dd, yyyy h:mm a')
-                  .format(DateTime.parse(widget.dateTime)),
+              DateFormat('MMMM dd, yyyy h:mm a').format(
+                DateTime.parse(widget.dateTime),
+              ),
               style: TextStyle(color: Color(0xff4b4b4b)),
             ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          deleteNote();
+        },
+        child: Icon(Icons.delete),
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
+        elevation: 2.0,
+        shape: CircleBorder(side: BorderSide(color: Colors.black, width: 2.0)),
       ),
     );
   }
