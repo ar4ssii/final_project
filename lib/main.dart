@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       if (query.isEmpty) {
         filteredNotes = List.from(notes);
+        Text("No results found");
       } else {
         filteredNotes = notes
             .where((note) =>
@@ -102,63 +103,69 @@ class _MyAppState extends State<MyApp> {
                 : ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: filteredNotes.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                    String id = filteredNotes[index]['id'];
-                    String Title = filteredNotes[index]['title'];
-                    String Content = filteredNotes[index]['content'];
-                    String dateTime =
-                    filteredNotes[index]['dateTime'];
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => UpdateNote(
-                          id: id,
-                          Title: Title,
-                          Content: Content,
-                          dateTime: dateTime,
+              itemCount: filteredNotes.length == 0 ? 1 : filteredNotes.length,
+               itemBuilder: (context, index) {
+                if(filteredNotes.length == 0){
+                 return Center(
+                  child: Text("No Notes Found"),
+                 );
+                }else{
+                  return GestureDetector(
+                    onTap: () {
+                      String id = filteredNotes[index]['id'];
+                      String Title = filteredNotes[index]['title'];
+                      String Content = filteredNotes[index]['content'];
+                      String dateTime =
+                      filteredNotes[index]['dateTime'];
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (BuildContext context) => UpdateNote(
+                            id: id,
+                            Title: Title,
+                            Content: Content,
+                            dateTime: dateTime,
+                          ),
                         ),
+                      );
+                      print('Note tapped: ${filteredNotes[index]['title']}');
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      margin: EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFFFFFFF),
+                        border:
+                        Border.all(color: Colors.black, width: 1.0),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
-                    );
-                    print('Note tapped: ${filteredNotes[index]['title']}');
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                        vertical: 10, horizontal: 20),
-                    margin: EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFFFFFFF),
-                      border:
-                      Border.all(color: Colors.black, width: 1.0),
-                      borderRadius: BorderRadius.circular(8.0),
+                      width: double.maxFinite,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            filteredNotes[index]['title'],
+                            style: TextStyle(fontSize: 20),
+                          ),
+                          Text(
+                            filteredNotes[index]['content'].length > 50
+                                ? filteredNotes[index]['content']
+                                .substring(0, 50) +
+                                '...'
+                                : filteredNotes[index]['content'],
+                          ),
+                          Text(
+                            DateFormat('MMMM dd, yyyy h:mm a').format(
+                                DateTime.parse(filteredNotes[index]
+                                ['dateTime'])),
+                            style: TextStyle(color: Color(0xff4b4b4b)),
+                          ),
+                        ],
+                      ),
                     ),
-                    width: double.maxFinite,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          filteredNotes[index]['title'],
-                          style: TextStyle(fontSize: 20),
-                        ),
-                        Text(
-                          filteredNotes[index]['content'].length > 50
-                              ? filteredNotes[index]['content']
-                              .substring(0, 50) +
-                              '...'
-                              : filteredNotes[index]['content'],
-                        ),
-                        Text(
-                          DateFormat('MMMM dd, yyyy h:mm a').format(
-                              DateTime.parse(filteredNotes[index]
-                              ['dateTime'])),
-                          style: TextStyle(color: Color(0xff4b4b4b)),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
+                  );
+                }
               },
             ),
           ],
