@@ -56,26 +56,24 @@ class _UpdateNoteState extends State<UpdateNote> {
   }
 
   Future<void> deleteNote(String id) async {
-    final url = Uri.parse('$server/notes.php');
-    try {
-      final response = await http.post(
-        url,
-        body: jsonEncode({'id': id}),
-        headers: {'Content-Type': 'application/json'},
-      );
-      if (response.statusCode == 200) {
+    final url = "$server/notes.php";
+    Map<String, dynamic> data = {
+      "id": widget.id
+    };
 
+    try {
+      final response = await http.delete(Uri.parse(url),body: jsonEncode(data));
+      if (response.statusCode == 200) {
         print('Note deleted successfully');
       } else {
-
         print('Failed to delete note: ${response.statusCode}');
       }
       Navigator.pop(context);
     } catch (e) {
-
       print('Error deleting note: $e');
     }
   }
+
 
 
   @override
@@ -99,6 +97,8 @@ class _UpdateNoteState extends State<UpdateNote> {
               children: [
                 GestureDetector(
                   onTap: () {
+                    String id = (widget.id);
+                    print('Trash tapped: ' + widget.id);
                     deleteNote(widget.id);
                   },
                   child: Icon(Icons.delete)
