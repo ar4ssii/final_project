@@ -1,6 +1,8 @@
 # devops_final_project
 
-A new Flutter project.
+Devops Final Project.
+
+Full and complete system with CRUD.
 
 ## Getting Started
 
