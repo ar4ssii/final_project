@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
+import 'package:http/http.dart' as http;
+import 'main.dart';
+
 
 void main() {
   runApp(MaterialApp(
@@ -8,11 +12,43 @@ void main() {
 }
 
 class Loading extends StatefulWidget {
+  const Loading({super.key});
+
   @override
   _LoadingState createState() => _LoadingState();
 }
 
 class _LoadingState extends State<Loading> {
+
+Future<void> validation() async{
+  try{
+    final url = "http://192.168.100.107/devops_finals/validate.php";
+    final response = await http.get(
+      Uri.parse(url)
+    );
+    Timer(Duration(seconds: 3), (){
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context)=>MyApp()));
+    });
+  }catch(ex){
+    showDialog(context: context, builder: (BuildContext context){
+      return AlertDialog(
+        title: Text("Error"),
+        content: Text("DBServer Not Found"),
+      );
+    });
+
+    Timer(Duration(seconds: 3),(){Navigator.pop(context); });
+    validation();
+  }
+}
+
+@override
+void initState(){
+  validation();
+
+  super.initState();
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +56,7 @@ class _LoadingState extends State<Loading> {
       appBar: AppBar(
         backgroundColor: Color(0xFFFFFFFF),
         centerTitle: true,
-        title: Text('App Name'),
+        title: Text('QuickNote'),
       ),
       body: SingleChildScrollView(
         child: Center(

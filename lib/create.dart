@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
-
-void main() {
-  runApp(MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: CreateNote(),
-  ));
-}
+import 'package:http/http.dart' as http;
 
 class CreateNote extends StatefulWidget {
   @override
@@ -14,6 +7,30 @@ class CreateNote extends StatefulWidget {
 }
 
 class _CreateNoteState extends State<CreateNote> {
+  TextEditingController _titleController = TextEditingController();
+  TextEditingController _contentController = TextEditingController();
+
+
+  Future<void> saveNote() async {
+    final server = "http://localhost/devops_finals/api"; // Adjust the server URL as needed
+    final url = Uri.parse("$server/notes.php");
+
+    // Prepare the data to be sent
+    Map<String, dynamic> data = {
+      "title": _titleController.text,
+      "content": _contentController.text
+    };
+
+    // Send a POST request to insert the data
+    final response = await http.post(url, body: data);
+
+    // Print the response for debugging purposes
+    print(response.body);
+
+    // Navigate back to the previous screen after saving the note
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,17 +44,12 @@ class _CreateNoteState extends State<CreateNote> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => MyApp()),
-                );
+                Navigator.pop(context); // Navigate back without saving
               },
               child: Icon(Icons.chevron_left),
             ),
             GestureDetector(
-              onTap: () {
-                //button to save note
-              },
+              onTap: saveNote, // Call saveNote when the save button is tapped
               child: Text(
                 'Save',
                 style: TextStyle(
@@ -60,6 +72,7 @@ class _CreateNoteState extends State<CreateNote> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: TextField(
+                        controller: _titleController,
                         decoration: InputDecoration(
                           hintText: 'Title',
                           hintStyle: TextStyle(fontSize: 25),
@@ -79,6 +92,7 @@ class _CreateNoteState extends State<CreateNote> {
                     Container(
                       padding: EdgeInsets.symmetric(horizontal: 10),
                       child: TextField(
+                        controller: _contentController,
                         decoration: InputDecoration(
                           border: InputBorder.none,
                           hintText: 'Enter Note',
@@ -91,14 +105,7 @@ class _CreateNoteState extends State<CreateNote> {
               ),
             ),
           ),
-          Container(
-            padding: EdgeInsets.all(10),
-            alignment: Alignment.bottomCenter,
-            child: Text(
-              '10/10/24  11:11pm',
-              style: TextStyle(color: Color(0xff4b4b4b)),
-            ),
-          ),
+
         ],
       ),
     );
