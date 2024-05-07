@@ -13,7 +13,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   TextEditingController _searchController = TextEditingController();
-  final server = "http://192.168.100.107/devops_finals/api";
+  final server = "http://localhost/devops_finals/api";
   List<dynamic> notes = [];
   List<dynamic> filteredNotes = [];
 

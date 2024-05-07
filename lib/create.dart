@@ -12,7 +12,7 @@ class _CreateNoteState extends State<CreateNote> {
 
 
   Future<void> saveNote() async {
-    final server = "http://192.168.100.107/devops_finals/api"; // Adjust the server URL as needed
+    final server = "http://localhost/devops_finals/api"; // Adjust the server URL as needed
     final url = Uri.parse("$server/notes.php");
 
     // Prepare the data to be sent

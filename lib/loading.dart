@@ -22,7 +22,7 @@ class _LoadingState extends State<Loading> {
 
 Future<void> validation() async{
   try{
-    final url = "http://192.168.100.107/devops_finals/validate.php";
+    final url = "http://localhost/devops_finals/validate.php";
     final response = await http.get(
       Uri.parse(url)
     );

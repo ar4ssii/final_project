@@ -24,7 +24,7 @@ class UpdateNote extends StatefulWidget {
 class _UpdateNoteState extends State<UpdateNote> {
   TextEditingController _title = TextEditingController();
   TextEditingController _content = TextEditingController();
-  final server = "http://192.168.100.107/devops_finals/api";
+  final server = "http://localhost/devops_finals/api";
 
   Future<void> updateData() async {
     final url = "$server/notes.php";
